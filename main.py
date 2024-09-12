@@ -8,3 +8,6 @@ medical_data_visualizer.draw_heat_map()
 
 # Run unit tests automatically
 main(module='test_module', exit=False)
+
+
+# ? Lists differ: [] != ['0.0', '0.0', '-0.0', '0.0', '-0.1', '0.5[616 chars]0.1']

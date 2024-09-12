@@ -30,7 +30,7 @@ def draw_cat_plot():
     # 7 Convert the data into long format and create a chart that shows the value counts of the categorical features using the following method provided by the seaborn library import : sns.catplot()
 
     chart = sns.catplot(data=df_cat, x="variable",
-                        y="total", hue="value", kind="bar",)
+                        y="total", hue="value", kind="bar", col="cardio")
     # 8
     fig = chart.figure
 
@@ -41,29 +41,29 @@ def draw_cat_plot():
 
 # 10 Draw the Heat Map in the draw_heat_map function
 def draw_heat_map():
+
     # 11 Clean the data in the df_heat variable by filtering out the following patient segments that represent incorrect data:
     # height is less than the 2.5th percentile (Keep the correct data with (df['height'] >= df['height'].quantile(0.025)))
     # height is more than the 97.5th percentile
     # weight is less than the 2.5th percentile
     # weight is more than the 97.5th percentile
-    df['height'] >= df['height'].quantile(0.025)
-    df['height'] <= df['height'].quantile(0.975)
-    df['weight'] >= df['weight'].quantile(0.025)
-    df['weight'] <= df['weight'].quantile(0.975)
-    df_heat = df
-
+    df_heat = df[((df['ap_lo'] <= df['ap_hi']) & (df['height'] >= df['height'].quantile(0.025)) &
+                  (df['height'] <= df['height'].quantile(0.975)) &
+                  (df['weight'] >= df['weight'].quantile(0.025)) &
+                  (df['weight'] <= df['weight'].quantile(0.975)))].copy()
     # 12 Calculate the correlation matrix and store it in the corr variable
     corr = df_heat.corr()
 
     # 13 Generate a mask for the upper triangle and store it in the mask variable
-    mask = np.triu_indices_from(np.ones_like(corr))
+    mask = np.triu(np.ones_like(corr, dtype=bool))
 
     # 14 Set up the matplotlib figure
     fig, ax = plt.subplots(figsize=(16, 9))
 
     # 15 Plot the correlation matrix using the method provided by the seaborn library import: sns.heatmap()
 
-    fig = sns.heatmap(corr, cmap='coolwarm').figure
+    sns.heatmap(corr, cmap='coolwarm', square=True,   mask=mask,
+                linewidths=0.5, annot=True, fmt="0.1f")
 
     # 16 Do not modify the next two lines
     fig.savefig('heatmap.png')
